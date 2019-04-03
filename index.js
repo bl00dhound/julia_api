@@ -8,6 +8,7 @@ const requestLog = require('express-request-log');
 const bodyParser = require('body-parser');
 
 const log = require('./providers/log');
+const db = require('./providers/db');
 const routes = require('./routes');
 
 const app = express();
@@ -26,6 +27,10 @@ process.on(
 );
 
 log.info('Starting application...');
+
+db.checkConnection();
+
+log.info(process.env.CNFG_DB__CONNECTION__HOST);
 
 app.enable('trust proxy');
 app.disable('x-powered-by');
