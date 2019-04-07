@@ -5,6 +5,8 @@ module.exports = {
 		indent: [2, 'tab', {SwitchCase: 1}],
 		'no-tabs': 0,
 		'comma-dangle': [2, 'never'],
-    'comma-spacing': [2, {'before': false, 'after': true}]
+		'comma-spacing': [2, {'before': false, 'after': true}],
+		'arrow-parens': 0,
+		'arrow-body-style': 0
 	},
 }

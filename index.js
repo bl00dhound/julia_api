@@ -10,6 +10,7 @@ const bodyParser = require('body-parser');
 const log = require('./providers/log');
 const db = require('./providers/db');
 const routes = require('./routes');
+const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
 const server = httpShutdown(http.createServer(app));
@@ -48,6 +49,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/v1', routes);
 
 app.use('*', (req, res) => res.status(404).send({ message: 'Resource not found' }));
+
+app.use(errorHandler);
 
 server.listen(process.env.PORT, '0.0.0.0', startCallback);
 
