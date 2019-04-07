@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/bl00dhound/julia_api#readme",
   "dependencies": {
+    "ajv": "^6.10.0",
     "bcrypt": "^3.0.5",
     "body-parser": "^1.18.3",
     "dotenv": "^7.0.0",

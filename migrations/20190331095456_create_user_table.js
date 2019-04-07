@@ -7,7 +7,7 @@ exports.up = knex => knex.schema.createTable('users', (table) => {
 	table.string('nickname').notNullable().unique();
 	table.string('password');
 	table.string('phone');
-	table.string('role').defaultTo('admin');
+	table.string('role').defaultTo('user');
 });
 
 exports.down = knex => knex.schema.dropTable('users');
