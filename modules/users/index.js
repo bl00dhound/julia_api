@@ -29,7 +29,10 @@ const service = {
 					...validatedUser,
 					password: await bcrypt.hash(validatedUser.password, 10)
 				});
-			});
+			})
+			.then(createdUser => ({
+				...createdUser, token: jwt.sign({ sub: user.id, role: user.role }, process.env.JWT_SECRET)
+			}));
 	},
 	list: dal.list,
 	getById: dal.getById
