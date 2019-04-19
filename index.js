@@ -6,6 +6,7 @@ const http = require('http');
 const httpShutdown = require('http-shutdown');
 const requestLog = require('express-request-log');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const log = require('./providers/log');
 const db = require('./providers/db');
@@ -33,6 +34,7 @@ db.checkConnection();
 
 log.info(process.env.CNFG_DB__CONNECTION__HOST);
 
+app.use(cors());
 app.enable('trust proxy');
 app.disable('x-powered-by');
 
