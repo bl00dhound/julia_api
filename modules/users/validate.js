@@ -1,7 +1,4 @@
-const R = require('ramda');
-
 const ajv = require('../../services/validation');
-const roles = require('../../enums/roles');
 
 const registration = ajv.compile({
 	$async: true,
@@ -10,12 +7,14 @@ const registration = ajv.compile({
 			type: 'string',
 			format: 'email',
 			minLength: 1,
-			maxLength: 255
+			maxLength: 255,
+			checkUniqueEmail: { $data: '1' }
 		},
 		nickname: {
 			type: 'string',
 			minLength: 3,
-			maxLength: 30
+			maxLength: 30,
+			checkUniqueNickname: { $data: '1' }
 		},
 		password: {
 			type: 'string',
@@ -26,10 +25,6 @@ const registration = ajv.compile({
 			type: ['string', 'null'],
 			minLength: 6,
 			maxLength: 20
-		},
-		role: {
-			type: ['string', 'null'],
-			enum: R.values(roles)
 		}
 	},
 	additionalProperties: false,
