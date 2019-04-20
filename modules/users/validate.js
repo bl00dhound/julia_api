@@ -28,7 +28,7 @@ const registration = ajv.compile({
 		}
 	},
 	additionalProperties: false,
-	require: ['nickname', 'email', 'password']
+	required: ['nickname', 'email', 'password']
 });
 
 module.exports = {

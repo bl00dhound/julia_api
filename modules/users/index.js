@@ -31,7 +31,7 @@ const service = {
 				});
 			})
 			.then(createdUser => ({
-				...createdUser, token: jwt.sign({ sub: user.id, role: user.role }, process.env.JWT_SECRET)
+				...createdUser, token: jwt.sign({ sub: createdUser.id, role: createdUser.role }, process.env.JWT_SECRET)
 			}));
 	},
 	list: dal.list,
