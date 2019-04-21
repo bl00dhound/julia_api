@@ -1,19 +1,28 @@
 const router = require('express').Router();
 
-const authorize = require('../middlewares/authorize');
-const roles = require('../enums/roles');
-
 const service = require('../modules/articles');
 
-router.post('/', authorize([roles.admin, roles.user]), (req, res, next) => {
+router.post('/', (req, res, next) => {
 	return service.create(req.body, req.user.sub)
 		.then(article => res.status(201).json(article))
 		.catch(next);
 });
 
-router.get('/', (req, res, next) => {
-	return service.list(req.query)
+router.get('/list/:user_id', (req, res, next) => {
+	return service.list(req.query, req.params.user_id)
 		.then(data => res.json(data))
+		.catch(next);
+});
+
+router.get('/list', (req, res, next) => {
+	return service.list(req.query, null)
+		.then(data => res.json(data))
+		.catch(next);
+});
+
+router.post('/:id/likes', (req, res, next) => {
+	return service.like(req.params.id, req.user.sub)
+		.then(() => res.json({ ok: true }))
 		.catch(next);
 });
 

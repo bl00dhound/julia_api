@@ -6,6 +6,7 @@ module.exports = {
 		'no-tabs': 0,
 		'comma-dangle': [2, 'never'],
 		'comma-spacing': [2, {'before': false, 'after': true}],
+		'camelcase': 0,
 		'arrow-parens': 0,
 		'arrow-body-style': 0
 	},
