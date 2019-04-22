@@ -7,6 +7,21 @@ const dal = {
 		.insert(data)
 		.returning('*')
 		.then(R.head),
+	getById: id => {
+		return db('articles as a')
+			.select(
+				'a.*',
+				db.raw(`coalesce((select count(user_id) from likes as l
+				where article_id = ? group by article_id), 0) as like_count`, [id]),
+				'u.email as author_email',
+				'u.nickname as author_nickname',
+				db.raw(`(coalesce((select count(c.id) from comments as c
+					where c.article_id = a.id group by c.article_id), 0)) as comment_count`)
+			)
+			.leftJoin('users as u', 'u.id', 'a.author_id')
+			.whereNull('a.removed_at')
+			.andWhere('a.id', id);
+	},
 	list: ({
 		sort,
 		// filter,
@@ -22,10 +37,14 @@ const dal = {
 			db.raw(`coalesce((select count(user_id) from likes as l
 				where l.article_id = a.id
 				group by l.article_id), 0) as like_count`),
-			db.raw('(case when l.article_id is not null then true else false end) as is_liked'),
 			db.raw(`(coalesce((select count(c.id) from comments as c
 				where c.article_id = a.id group by c.article_id), 0)) as comment_count`)
 		];
+
+		if (user_id) {
+			fields.push(db.raw('(case when l.article_id is not null then true else false end) as is_liked'));
+		}
+
 		const query = db('articles as a')
 			.select(fields)
 			.leftJoin('users as u', 'u.id', 'a.author_id');

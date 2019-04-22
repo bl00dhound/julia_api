@@ -15,7 +15,8 @@ const service = {
 				total: R.pathOr(0, [0, 'total_count'])(rows)
 			}));
 	},
-	like: dal.like
+	like: dal.like,
+	getById: dal.getById
 };
 
 module.exports = service;
