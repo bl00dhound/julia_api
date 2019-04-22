@@ -9,7 +9,7 @@ const dal = {
 		.then(R.head),
 	getById: id => {
 		return db('articles as a')
-			.select(
+			.first(
 				'a.*',
 				db.raw(`coalesce((select count(user_id) from likes as l
 				where article_id = ? group by article_id), 0) as like_count`, [id]),
