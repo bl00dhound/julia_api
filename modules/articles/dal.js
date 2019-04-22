@@ -22,7 +22,9 @@ const dal = {
 			db.raw(`coalesce((select count(user_id) from likes as l
 				where l.article_id = a.id
 				group by l.article_id), 0) as like_count`),
-			db.raw('(case when l.article_id is not null then true else false end) as is_liked')
+			db.raw('(case when l.article_id is not null then true else false end) as is_liked'),
+			db.raw(`(coalesce((select count(c.id) from comments as c
+				where c.article_id = a.id group by c.article_id), 0)) as comment_count`)
 		];
 		const query = db('articles as a')
 			.select(fields)
@@ -30,7 +32,7 @@ const dal = {
 
 		const orderables = {
 			likes: 'like_count',
-			// comments: 'c.total',
+			comments: 'comment_count',
 			date: 'a.updated_at'
 		};
 		const direction = {
