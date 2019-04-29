@@ -52,6 +52,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 require('./middlewares/passport');
 
 app.use('/v1', authenticate, routes);
+app.use('/public', express.static('uploads'));
 
 app.use('*', (req, res) => res.status(404).send({ message: 'Resource not found' }));
 

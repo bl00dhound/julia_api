@@ -19,6 +19,10 @@ const updateProperties = {
 		type: ['string', 'null'],
 		minLength: 6,
 		maxLength: 20
+	},
+	image: {
+		type: ['string', 'null'],
+		maxLength: 255
 	}
 };
 
