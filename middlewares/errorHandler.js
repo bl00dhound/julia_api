@@ -1,5 +1,6 @@
 const errors = require('http-errors');
 const Ajv = require('ajv');
+const multer = require('multer');
 const R = require('ramda');
 
 const prepareErrorMessages = R.map(R.pick(['keyword', 'dataPath', 'message']));
@@ -8,6 +9,9 @@ const prepareErrorMessages = R.map(R.pick(['keyword', 'dataPath', 'message']));
 module.exports = (err, _req, res, _next) => {
 	if (err instanceof errors.HttpError) {
 		return res.status(err.statusCode).send(err.message);
+	}
+	if (err instanceof multer.MulterError) {
+		return res.status(400).send('file upload error');
 	}
 	if (err instanceof Ajv.ValidationError) {
 		const messages = prepareErrorMessages(err.errors);
