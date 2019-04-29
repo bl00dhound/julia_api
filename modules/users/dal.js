@@ -16,6 +16,18 @@ const dal = {
 			.then(R.head)
 			.then(R.dissoc(['password']));
 	},
+	update: data => {
+		const updateData = R.compose(
+			R.assoc('updated_at', new Date()),
+			R.dissoc(['id'])
+		)(data);
+		return db('users')
+			.update(updateData)
+			.where({ id: data.id })
+			.returning('*')
+			.then(R.head)
+			.then(R.dissoc(['password']));
+	},
 	list: () => {
 		return db('users')
 			.select(

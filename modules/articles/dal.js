@@ -33,6 +33,18 @@ const dal = {
 
 		return query;
 	},
+	update: data => {
+		const updatedData = R.compose(
+			R.assoc('updated_at', new Date()),
+			R.dissoc(['id'])
+		)(data);
+		return db('articles')
+			.update(updatedData)
+			.where({ id: data.id })
+			.returning('*')
+			.then(R.head)
+			.then(R.dissoc(['password']));
+	},
 	list: ({
 		sort,
 		filters,

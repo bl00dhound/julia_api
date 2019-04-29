@@ -4,7 +4,11 @@ const R = require('ramda');
 const jwt = require('jsonwebtoken');
 
 const dal = require('./dal');
-const validate = require('./validate.js');
+const {
+	registration,
+	validateUpdate,
+	validateUpdateByAdmin
+} = require('./validate.js');
 
 const service = {
 	passportLogin: (nickname, password) => {
@@ -22,7 +26,7 @@ const service = {
 	},
 	registration: user => {
 		if (!user.isAgree) throw new httpError.NotAcceptable();
-		return validate.registration(user)
+		return registration(user)
 			.then(async validatedUser => {
 				return dal.create({
 					...validatedUser,
@@ -32,6 +36,14 @@ const service = {
 			.then(createdUser => ({
 				...createdUser, token: jwt.sign({ id: createdUser.id }, process.env.JWT_SECRET, { expiresIn: '1d' })
 			}));
+	},
+	update: (data, user_id) => {
+		return validateUpdate({ ...data, id: user_id })
+			.then(dal.update);
+	},
+	updateByAdmin: (data, user_id) => {
+		return validateUpdateByAdmin({ ...data, id: user_id })
+			.then(dal.update);
 	},
 	list: dal.list,
 	getById: dal.getById

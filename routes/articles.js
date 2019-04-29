@@ -10,6 +10,12 @@ router.post('/', authorize([roles.user]), (req, res, next) => {
 		.catch(next);
 });
 
+router.put('/:article_id', authorize([roles.user]), (req, res, next) => {
+	return service.update(req.params.article_id, req.body, req.user.id)
+		.then(data => res.json(data))
+		.catch(next);
+});
+
 router.get('/:article_id', (req, res, next) => {
 	return service.getById(req.params.article_id, req.user.id)
 		.then(data => res.json(data))

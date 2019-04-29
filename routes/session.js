@@ -28,6 +28,18 @@ router.put('/login', (req, res) => {
 	})(req, res);
 });
 
+router.put('/current', authorize([roles.user]), (req, res, next) => {
+	return service.update(req.body, req.user.id)
+		.then(user => res.json(user))
+		.catch(next);
+});
+
+router.put('/:user_id', authorize([roles.admin]), (req, res, next) => {
+	return service.updateByAdmin(req.body, req.params.user_id)
+		.then(user => res.json(user))
+		.catch(next);
+});
+
 router.get('/', authorize([roles.admin]), (req, res, next) => {
 	return service.list(req.query.params)
 		.then(rows => res.json(rows))
