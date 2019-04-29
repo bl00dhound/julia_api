@@ -45,6 +45,14 @@ const dal = {
 			.then(R.head)
 			.then(R.dissoc(['password']));
 	},
+	remove: id => {
+		return db('articles')
+			.update({ removed_at: new Date() })
+			.where({ id })
+			.returning('*')
+			.then(R.head)
+			.then(R.dissoc(['password']));
+	},
 	list: ({
 		sort,
 		filters,

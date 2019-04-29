@@ -16,6 +16,12 @@ router.put('/:article_id', authorize([roles.user]), (req, res, next) => {
 		.catch(next);
 });
 
+router.delete('/:article_id', authorize([roles.user]), (req, res, next) => {
+	return service.remove(req.params.article_id, req.user)
+		.then(data => res.json(data))
+		.catch(next);
+});
+
 router.get('/:article_id', (req, res, next) => {
 	return service.getById(req.params.article_id, req.user.id)
 		.then(data => res.json(data))

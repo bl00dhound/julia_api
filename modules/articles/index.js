@@ -2,6 +2,7 @@ const R = require('ramda');
 const httpErrors = require('http-errors');
 
 const dal = require('./dal');
+const roles = require('../../enums/roles');
 const { validate, validateUpdate } = require('./validate');
 
 const service = {
@@ -15,6 +16,13 @@ const service = {
 				rows,
 				total: R.pathOr(0, [0, 'total_count'])(rows)
 			}));
+	},
+	remove: async (id, user) => {
+		const oldData = await service.getById(id);
+		if (R.isEmpty(oldData)
+			|| R.isNil(oldData)
+			|| (oldData.author_id !== user.id && user.role !== roles.admin)) throw httpErrors.BadRequest();
+		return dal.remove(id);
 	},
 	update: async (id, data, user_id) => {
 		const oldData = await service.getById(id);
