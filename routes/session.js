@@ -67,7 +67,8 @@ router.post(
 	upload.single('avatar'),
 	(req, res, next) => {
 		const image = req.file.filename;
-		return service.update({ image }, req.user.id)
+		const filePath = `http://${process.env.CURRENT_DOMAIN}:${process.env.PORT}/public/${image}`;
+		return service.update({ image: filePath }, req.user.id)
 			.then(user => res.json(user))
 			.catch(next);
 	}
