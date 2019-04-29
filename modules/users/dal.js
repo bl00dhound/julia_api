@@ -49,7 +49,8 @@ const dal = {
 				'email',
 				'nickname',
 				'phone',
-				'role'
+				'role',
+				'image'
 			)
 			.whereNull('removed_at')
 			.andWhere({ id });
