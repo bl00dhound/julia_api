@@ -4,6 +4,8 @@ const router = require('express').Router();
 const httpErrors = require('http-errors');
 
 const service = require('../modules/users');
+const authorize = require('../middlewares/authorize');
+const roles = require('../enums/roles');
 
 router.post('/registration', (req, res, next) => {
 	return service.registration(req.body)
@@ -26,13 +28,19 @@ router.put('/login', (req, res) => {
 	})(req, res);
 });
 
-router.get('/', (req, res, next) => {
+router.get('/', authorize([roles.admin]), (req, res, next) => {
 	return service.list(req.query.params)
 		.then(rows => res.json(rows))
 		.catch(next);
 });
 
-router.get('/:id', (req, res, next) => {
+router.get('/current', authorize([roles.user]), (req, res, next) => {
+	return service.getById(req.user.id)
+		.then(user => res.json(user))
+		.catch(next);
+});
+
+router.get('/:id', authorize([roles.admin]), (req, res, next) => {
 	return service.getById(req.params.id)
 		.then(user => res.json(user))
 		.catch(next);

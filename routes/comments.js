@@ -1,9 +1,11 @@
 const router = require('express').Router();
 
 const service = require('../modules/comments');
+const roles = require('../enums/roles');
+const authorize = require('../middlewares/authorize');
 
-router.post('/', (req, res, next) => {
-	return service.create(req.body, req.user.sub)
+router.post('/', authorize([roles.user]), (req, res, next) => {
+	return service.create(req.body, req.user.id)
 		.then(comment => res.status(201).json(comment))
 		.catch(next);
 });

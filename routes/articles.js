@@ -1,9 +1,11 @@
 const router = require('express').Router();
 
 const service = require('../modules/articles');
+const roles = require('../enums/roles');
+const authorize = require('../middlewares/authorize.js');
 
-router.post('/', (req, res, next) => {
-	return service.create(req.body, req.user.sub)
+router.post('/', authorize([roles.user]), (req, res, next) => {
+	return service.create(req.body, req.user.id)
 		.then(article => res.status(201).json(article))
 		.catch(next);
 });
@@ -20,8 +22,8 @@ router.get('/', (req, res, next) => {
 		.catch(next);
 });
 
-router.post('/:id/likes', (req, res, next) => {
-	return service.like(req.params.id, req.user.sub)
+router.post('/:id/likes', authorize([roles.user]), (req, res, next) => {
+	return service.like(req.params.id, req.user.id)
 		.then(() => res.json({ ok: true }))
 		.catch(next);
 });
