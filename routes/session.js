@@ -73,6 +73,7 @@ router.post(
 	}
 );
 
+
 router.put('/current', authorize([roles.user]), (req, res, next) => {
 	return service.update(req.body, req.user.id)
 		.then(user => res.json(user))
