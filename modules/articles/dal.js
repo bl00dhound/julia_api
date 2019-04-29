@@ -7,24 +7,35 @@ const dal = {
 		.insert(data)
 		.returning('*')
 		.then(R.head),
-	getById: id => {
-		return db('articles as a')
-			.first(
-				'a.*',
-				db.raw(`coalesce((select count(user_id) from likes as l
-				where article_id = ? group by article_id), 0) as like_count`, [id]),
-				'u.email as author_email',
-				'u.nickname as author_nickname',
-				db.raw(`(coalesce((select count(c.id) from comments as c
-					where c.article_id = a.id group by c.article_id), 0)) as comment_count`)
-			)
+	getById: (id, user_id = null) => {
+		const fields = [
+			'a.*',
+			db.raw(`coalesce((select count(user_id) from likes as l
+			where article_id = ? group by article_id), 0) as like_count`, [id]),
+			'u.email as author_email',
+			'u.nickname as author_nickname',
+			db.raw(`(coalesce((select count(c.id) from comments as c
+				where c.article_id = a.id group by c.article_id), 0)) as comment_count`)
+		];
+
+		fields.push(db.raw('(case when l.article_id is not null then true else false end) as is_liked'));
+
+		const query = db('articles as a')
+			.first(fields)
 			.leftJoin('users as u', 'u.id', 'a.author_id')
 			.whereNull('a.removed_at')
 			.andWhere('a.id', id);
+
+		query.leftJoin('likes as l', function () {
+			this.on('l.article_id', '=', 'a.id')
+				.andOn(db.raw('l.user_id = ?', [user_id]));
+		});
+
+		return query;
 	},
 	list: ({
 		sort,
-		// filter,
+		filters,
 		search,
 		offset = 0,
 		limit = 20
@@ -49,6 +60,17 @@ const dal = {
 			.select(fields)
 			.leftJoin('users as u', 'u.id', 'a.author_id');
 
+		const filterables = {
+			author_id: {
+				reference: 'a.author_id',
+				type: 'general'
+			},
+			status: {
+				reference: 'a.status',
+				type: 'general'
+			}
+		};
+
 		const orderables = {
 			likes: 'like_count',
 			comments: 'comment_count',
@@ -66,13 +88,23 @@ const dal = {
 			});
 		}
 
+		if (filters) {
+			R.compose(
+				R.forEach(filter => {
+					query.whereIn(filterables[filter].reference, filters[filter]);
+				}),
+				R.keys
+			)(filters);
+		}
+
 		if (sort) {
 			const [field, direct] = sort;
 			query.orderBy(orderables[field], direction[direct]);
 		}
 
 		if (search) {
-			query.whereRaw('a.title ilike ?', [`%${search}%`]);
+			query.whereRaw(`a.title ilike :search
+				or u.nickname ilike :search`, { search: `%${search}%` });
 		}
 
 		return query

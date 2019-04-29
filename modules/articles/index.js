@@ -8,7 +8,7 @@ const service = {
 		return validate({ ...data, author_id: id })
 			.then(dal.create);
 	},
-	list: (data, user_id) => {
+	list: (data, user_id = null) => {
 		return dal.list(data, user_id)
 			.then(rows => ({
 				rows,
