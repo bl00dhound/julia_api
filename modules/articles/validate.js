@@ -1,5 +1,21 @@
 const ajv = require('../../services/validation');
 
+const updatedFields = {
+	title: {
+		type: ['string', 'null'],
+		minLength: 1,
+		maxLength: 255
+	},
+	content: {
+		type: ['string', 'null'],
+		minLength: 1
+	},
+	tags: {
+		type: ['array', 'null'],
+		items: { type: 'string' }
+	}
+};
+
 const validate = ajv.compile({
 	$async: true,
 	properties: {
@@ -24,6 +40,20 @@ const validate = ajv.compile({
 	required: ['title', 'content', 'author_id']
 });
 
+const validateUpdate = ajv.compile({
+	$async: true,
+	properties: {
+		...updatedFields,
+		id: {
+			type: 'integer',
+			minimum: 1
+		}
+	},
+	additionalProperties: false,
+	required: ['id']
+});
+
 module.exports = {
-	validate
+	validate,
+	validateUpdate
 };

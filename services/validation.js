@@ -8,7 +8,8 @@ const ajv = new Ajv({
 	allErrors: true,
 	removeAdditional: true,
 	coerceTypes: true,
-	useDefaults: true
+	useDefaults: true,
+	$data: true
 });
 
 ajv.addKeyword('checkUniqueEmail', {
@@ -19,6 +20,18 @@ ajv.addKeyword('checkUniqueEmail', {
 		return db('users')
 			.first('*')
 			.where({ email })
+			.then(R.isNil);
+	}
+});
+ajv.addKeyword('checkUpdateEmail', {
+	async: true,
+	type: 'string',
+	$data: true,
+	validate: (reference, email) => {
+		return db('users')
+			.first('*')
+			.where({ email })
+			.andWhereNot({ id: reference.id })
 			.then(R.isNil);
 	}
 });
