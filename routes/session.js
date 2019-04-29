@@ -1,5 +1,7 @@
-
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
 const router = require('express').Router();
+const httpErrors = require('http-errors');
 
 const service = require('../modules/users');
 
@@ -9,10 +11,19 @@ router.post('/registration', (req, res, next) => {
 		.catch(next);
 });
 
-router.put('/login', (req, res, next) => {
-	return service.login(req.body.nickname, req.body.password)
-		.then(user => res.json(user))
-		.catch(next);
+router.put('/login', (req, res) => {
+	passport.authenticate('local', { session: false }, (err, user) => {
+		if (err || !user) throw httpErrors.Unauthorized();
+		return req.login(user, { session: false }, (e) => {
+			if (e) res.send(e);
+			const token = jwt.sign(
+				{ id: user.id },
+				process.env.JWT_SECRET,
+				{ expiresIn: '1d' }
+			);
+			return res.json({ user, token });
+		});
+	})(req, res);
 });
 
 router.get('/', (req, res, next) => {

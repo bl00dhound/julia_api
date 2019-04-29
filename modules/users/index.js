@@ -7,7 +7,7 @@ const dal = require('./dal');
 const validate = require('./validate.js');
 
 const service = {
-	login: (nickname, password) => {
+	passportLogin: (nickname, password) => {
 		if (!nickname || !password) {
 			throw new httpError.BadRequest();
 		}
@@ -17,8 +17,7 @@ const service = {
 				if (!(await bcrypt.compare(password, user.password)))	{
 					throw new httpError.Unauthorized();
 				}
-				const token = jwt.sign({ sub: user.id, role: user.role }, process.env.JWT_SECRET);
-				return R.compose(R.assoc('token', token), R.dissoc(['password']))(user);
+				return R.dissoc(['password'])(user);
 			});
 	},
 	registration: user => {
@@ -31,7 +30,7 @@ const service = {
 				});
 			})
 			.then(createdUser => ({
-				...createdUser, token: jwt.sign({ sub: createdUser.id, role: createdUser.role }, process.env.JWT_SECRET)
+				...createdUser, token: jwt.sign({ id: createdUser.id }, process.env.JWT_SECRET, { expiresIn: '1d' })
 			}));
 	},
 	list: dal.list,

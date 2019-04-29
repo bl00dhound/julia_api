@@ -26,11 +26,11 @@ router.get('/:article_id', (req, res, next) => {
 		.catch(next);
 });
 
-router.get('/list', (req, res, next) => {
-	return service.list(req.query, null)
-		.then(data => res.json(data))
-		.catch(next);
-});
+// router.get('/list', (req, res, next) => {
+// 	return service.list(req.query, null)
+// 		.then(data => res.json(data))
+// 		.catch(next);
+// });
 
 router.post('/:id/likes', (req, res, next) => {
 	return service.like(req.params.id, req.user.sub)

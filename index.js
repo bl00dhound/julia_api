@@ -12,6 +12,7 @@ const log = require('./providers/log');
 const db = require('./providers/db');
 const routes = require('./routes');
 const errorHandler = require('./middlewares/errorHandler');
+const authenticate = require('./middlewares/authenticate');
 
 const app = express();
 const server = httpShutdown(http.createServer(app));
@@ -48,7 +49,9 @@ app.use(helmet());
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/v1', routes);
+require('./middlewares/passport');
+
+app.use('/v1', authenticate, routes);
 
 app.use('*', (req, res) => res.status(404).send({ message: 'Resource not found' }));
 
