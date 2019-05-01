@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const R = require('ramda');
 const passport = require('passport');
 const router = require('express').Router();
-const httpErrors = require('http-errors');
 const multer = require('multer');
 const path = require('path');
 
@@ -42,7 +41,7 @@ router.put('/login', (req, res) => {
 	passport.authenticate('local', {
 		session: false
 	}, (err, user) => {
-		if (err || !user) throw httpErrors.Unauthorized();
+		if (err || !user) return res.status(403).send('nickname doesn\'t exist');
 		return req.login(user, {
 			session: false
 		}, (e) => {
