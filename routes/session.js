@@ -98,6 +98,12 @@ router.get('/current', authorize([roles.user]), (req, res, next) => {
 		.catch(next);
 });
 
+router.get('/check/:field/:data', (req, res, next) => {
+	return service.checkIfFieldUnique(req.params.field, req.params.data)
+		.then(data => res.send(data))
+		.catch(next);
+});
+
 router.get('/:id', authorize([roles.admin]), (req, res, next) => {
 	return service.getById(req.params.id)
 		.then(user => res.json(user))

@@ -4,6 +4,7 @@ const R = require('ramda');
 const jwt = require('jsonwebtoken');
 
 const dal = require('./dal');
+const checkingFields = R.values(require('../../enums/checking-fields'));
 const {
 	registration,
 	validateUpdate,
@@ -23,6 +24,12 @@ const service = {
 				}
 				return R.dissoc(['password'])(user);
 			});
+	},
+	checkIfFieldUnique: (field, data) => {
+		if (!field || !data || !checkingFields.includes(field)) throw httpError(400, 'wrong data');
+
+		return dal.checkIfFieldUnique(field, data)
+			.then(R.isNil);
 	},
 	registration: user => {
 		if (!user.isAgree) throw new httpError.NotAcceptable();
