@@ -88,6 +88,10 @@ const dal = {
 			status: {
 				reference: 'a.status',
 				type: 'general'
+			},
+			tag: {
+				reference: 'a.tags',
+				type: 'json'
 			}
 		};
 
@@ -111,7 +115,18 @@ const dal = {
 		if (filters) {
 			R.compose(
 				R.forEach(filter => {
-					query.whereIn(filterables[filter].reference, filters[filter]);
+					switch (filterables[filter].type) {
+						case 'json':
+							query.andWhere(function () {
+								filters[filter].forEach(tag => {
+									this.orWhere(db.raw('? = any(??)', [tag, filterables[filter].reference]));
+								});
+							});
+							break;
+						default:
+							query.whereIn(filterables[filter].reference, filters[filter]);
+							break;
+					}
 				}),
 				R.keys
 			)(filters);
