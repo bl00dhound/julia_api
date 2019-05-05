@@ -50,8 +50,7 @@ const dal = {
 			.update({ removed_at: new Date() })
 			.where({ id })
 			.returning('*')
-			.then(R.head)
-			.then(R.dissoc(['password']));
+			.then(R.head);
 	},
 	list: ({
 		sort,

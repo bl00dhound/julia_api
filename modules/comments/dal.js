@@ -7,6 +7,15 @@ const dal = {
 		.insert(data)
 		.returning('*')
 		.then(R.head),
+	getById: id => db('comments')
+		.first()
+		.where({ id })
+		.whereNull('removed_at'),
+	remove: id => db('comments')
+		.update({ removed_at: new Date() })
+		.where({ id })
+		.returning('*')
+		.then(R.head),
 	list: ({
 		offset = 0,
 		limit = 20
