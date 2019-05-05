@@ -28,6 +28,11 @@ const dal = {
 			.then(R.head)
 			.then(R.dissoc(['password']));
 	},
+	checkIfFieldUnique: (field, data) => {
+		return db('users')
+			.first('id')
+			.where({ [field]: data });
+	},
 	list: () => {
 		return db('users')
 			.select(
