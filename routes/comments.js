@@ -10,6 +10,12 @@ router.post('/', authorize([roles.user]), (req, res, next) => {
 		.catch(next);
 });
 
+router.put('/:comment_id', authorize([roles.user]), (req, res, next) => {
+	return service.update(req.params.comment_id, req.body, req.user.id)
+		.then(data => res.json(data))
+		.catch(next);
+});
+
 router.delete('/:comment_id', authorize([roles.user]), (req, res, next) => {
 	return service.remove(req.params.comment_id, req.user)
 		.then(comment => res.json(comment))

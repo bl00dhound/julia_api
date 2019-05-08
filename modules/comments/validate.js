@@ -21,6 +21,25 @@ const validate = ajv.compile({
 	required: ['content', 'author_id', 'article_id']
 });
 
+const validateUpdate = ajv.compile({
+	$async: true,
+	properties: {
+		id: {
+			type: 'integer'
+		},
+		content: {
+			type: ['string', 'null'],
+			minLength: 1
+		},
+		parent_id: {
+			type: ['integer', 'null']
+		}
+	},
+	additionalProperties: false,
+	required: ['id']
+});
+
 module.exports = {
-	validate
+	validate,
+	validateUpdate
 };
