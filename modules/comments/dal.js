@@ -10,8 +10,19 @@ const dal = {
 	getById: id => db('comments as c')
 		.first('c.*', 'u.email', 'u.nickname')
 		.leftJoin('users as u', 'u.id', 'c.author_id')
-		.where({ id })
-		.whereNull('removed_at'),
+		.where('c.id', id)
+		.whereNull('c.removed_at'),
+	update: data => {
+		const updatedData = R.compose(
+			R.assoc('updated_at', new Date()),
+			R.dissoc(['id'])
+		)(data);
+		return db('comments')
+			.update(updatedData)
+			.where({ id: data.id })
+			.returning('*')
+			.then(R.head);
+	},
 	remove: id => db('comments')
 		.update({ removed_at: new Date() })
 		.where({ id })
@@ -29,7 +40,7 @@ const dal = {
 			)
 			.leftJoin('users as u', 'u.id', 'c.author_id')
 			.where({ article_id })
-			.whereNull('removed_at');
+			.whereNull('c.removed_at');
 		return query
 			.offset(offset)
 			.limit(limit);
