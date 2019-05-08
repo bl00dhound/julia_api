@@ -7,8 +7,9 @@ const dal = {
 		.insert(data)
 		.returning('*')
 		.then(R.head),
-	getById: id => db('comments')
-		.first()
+	getById: id => db('comments as c')
+		.first('c.*', 'u.email', 'u.nickname')
+		.leftJoin('users as u', 'u.id', 'c.author_id')
 		.where({ id })
 		.whereNull('removed_at'),
 	remove: id => db('comments')
@@ -22,10 +23,13 @@ const dal = {
 	}, article_id) => {
 		const query = db('comments as c')
 			.select(
-				'c.*'
+				'c.*',
+				'u.email',
+				'u.nickname'
 			)
 			.leftJoin('users as u', 'u.id', 'c.author_id')
-			.where({ article_id });
+			.where({ article_id })
+			.whereNull('removed_at');
 		return query
 			.offset(offset)
 			.limit(limit);

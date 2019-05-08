@@ -6,7 +6,7 @@ const db = require('../providers/db');
 const ajv = new Ajv({
 	v5: true, // allows json schema features like $data to be used
 	allErrors: true,
-	removeAdditional: true,
+	removeAdditional: 'failing',
 	coerceTypes: true,
 	useDefaults: true,
 	$data: true
